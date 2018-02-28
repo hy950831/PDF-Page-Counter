@@ -1,15 +1,20 @@
 <template>
   <div id="app">
-    <input type="file" name="files" id="files" multiple @change="processFile($event)">
-    <el-table :data="tableData" style="width: 100%">
-      <el-table-column prop="name" label="文件名" width="180"></el-table-column>
-      <el-table-column prop="pageCount" label="页数" width="180"></el-table-column>
-      <el-table-column prop="preview" label="预览" width="180">
+    <el-button size="small" type="primary">
+      <label class="selectBtn">
+        点此上传
+        <input type="file" class="selectfiles" accept=".pdf" name="files" id="files" multiple @change="processFile($event)">
+      </label>
+    </el-button>
+    <el-table :data="tableData" style="width: 100%" border>
+      <el-table-column prop="name" label="文件名" min-width="110" align="center"></el-table-column>
+      <el-table-column prop="pageCount" label="页数" width="110" align="center"></el-table-column>
+      <el-table-column prop="preview" label="预览" width="180" align="center">
         <template slot-scope="scope">
           <pdf class="preview" :src="scope.row.address" @num-pages="updatePageCount($event, scope.$index)"></pdf>
         </template>
       </el-table-column>
-      <el-table-column prop="pagesPerSheet" label="页每张" width="180">
+      <el-table-column prop="pagesPerSheet" label="页每张" width="180" align="center">
         <template slot-scope="scope">
           <el-select v-model="scope.row.pagesPerSheet" @change="handlePagesPerSheetChange($event, scope.$index)">
             <el-option v-for="item in options" :key="item" :label="item+'页每张'" :value="item">
@@ -17,15 +22,15 @@
           </el-select>
         </template>
       </el-table-column>
-      <el-table-column prop="duplexPrint" label="双面" width="180">
+      <el-table-column prop="duplexPrint" label="双面" width="180" align="center">
         <template slot-scope="scope">
           <span v-if="scope.row.duplexPrint === true"></span>
           <el-switch @change="handleDuplexPrintChange($event, scope.$index)" v-model="scope.row.duplexPrint" active-color="#13ce66" inactive-color="#ff4949"></el-switch>
         </template>
       </el-table-column>
-      <el-table-column prop="sheetsNeeded" label="张数" width="180"></el-table-column>
-
+      <el-table-column prop="sheetsNeeded" label="张数" width="180" align="center"></el-table-column>
     </el-table>
+    <h3 style="text-align:center">共计 {{totalSheetCount}} 张</h3>
   </div>
 </template>
 
@@ -42,6 +47,7 @@ export default {
       visible: false,
       tableData: [],
       options: [1, 2, 4, 6],
+      totalSheetCount: 0,
       fileList: []
     }
   },
@@ -66,6 +72,7 @@ export default {
         newItem.sheetsNeeded = event
         this.$set(this.tableData, index, newItem)
       }
+      this.updateTotalSheetCount()
     },
     handlePagesPerSheetChange(event, index) {
       if (event) {
@@ -90,6 +97,13 @@ export default {
       }
       newItem.sheetsNeeded = sheets
       this.$set(this.tableData, index, newItem)
+      this.updateTotalSheetCount()
+    },
+    updateTotalSheetCount() {
+      this.totalSheetCount = 0
+      for (let item of this.tableData) {
+        this.totalSheetCount += item.sheetsNeeded
+      }
     }
   }
 }
@@ -99,5 +113,8 @@ export default {
 .preview {
   display: inline-block;
   height: 200px;
+}
+.selectfiles {
+  display: none;
 }
 </style>
