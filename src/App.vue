@@ -6,10 +6,16 @@
         <input type="file" class="selectfiles" accept=".pdf" name="files" id="files" multiple @change="processFile($event)">
       </label>
     </el-button>
+    <h3 style="text-align:center">共计 {{tableData.length}} 文件 {{totalSheetCount}} 张</h3>
     <el-table :data="tableData" style="width: 100%" border>
       <el-table-column prop="name" label="文件名" min-width="110" align="center"></el-table-column>
+      <el-table-column prop="copies" label="份数" width="150" align="center">
+        <template slot-scope="scope">
+          <el-input-number size="mini" v-model="scope.row.copies" @change="handleCopiesChange($event, scope.$index)" :min="1" :max="100"></el-input-number>
+        </template>
+      </el-table-column>
       <el-table-column prop="pageCount" label="页数" width="110" align="center"></el-table-column>
-      <el-table-column prop="preview" label="预览" width="180" align="center">
+      <el-table-column prop="preview" label="预览" width="100" align="center">
         <template slot-scope="scope">
           <pdf class="preview" :src="scope.row.address" @num-pages="updatePageCount($event, scope.$index)"></pdf>
         </template>
@@ -30,7 +36,6 @@
       </el-table-column>
       <el-table-column prop="sheetsNeeded" label="张数" width="180" align="center"></el-table-column>
     </el-table>
-    <h3 style="text-align:center">共计 {{totalSheetCount}} 张</h3>
   </div>
 </template>
 
@@ -47,18 +52,23 @@ export default {
       visible: false,
       tableData: [],
       options: [1, 2, 4, 6],
-      totalSheetCount: 0,
-      fileList: []
+      totalSheetCount: 0
     }
   },
   methods: {
+    clean() {
+      this.tableData = []
+      this.totalSheetCount = 0
+    },
     processFile(event) {
+      this.clean()
       this.fileList = event.target.files
       this.tableData = []
       const URL = window.URL || window.webkitURL
       for (let item of this.fileList) {
         item.address = URL.createObjectURL(item)
         item.pageCount = 0
+        item.copies = 1
         item.pagesPerSheet = 1
         item.duplexPrint = true
         item.sheetsNeeded = 0
@@ -69,22 +79,28 @@ export default {
       if (event) {
         let newItem = this.tableData[index]
         newItem.pageCount = event
-        newItem.sheetsNeeded = event
         this.$set(this.tableData, index, newItem)
+        this.updateSheetsNeeded(index)
+        this.updateTotalSheetCount()
       }
-      this.updateTotalSheetCount()
     },
     handlePagesPerSheetChange(event, index) {
       if (event) {
         let newItem = this.tableData[index]
         newItem.pagesPerSheet = event
         this.$set(this.tableData, index, newItem)
+        this.updateSheetsNeeded(index)
       }
-      this.updateSheetsNeeded(index)
     },
     handleDuplexPrintChange(event, index) {
       let newItem = this.tableData[index]
       newItem.duplexPrint = event
+      this.$set(this.tableData, index, newItem)
+      this.updateSheetsNeeded(index)
+    },
+    handleCopiesChange(event, index) {
+      let newItem = this.tableData[index]
+      newItem.copies = event
       this.$set(this.tableData, index, newItem)
       this.updateSheetsNeeded(index)
     },
@@ -95,6 +111,7 @@ export default {
       if (newItem.duplexPrint) {
         sheets = Math.ceil(sheets / 2)
       }
+      sheets *= newItem.copies
       newItem.sheetsNeeded = sheets
       this.$set(this.tableData, index, newItem)
       this.updateTotalSheetCount()
@@ -112,7 +129,6 @@ export default {
 <style>
 .preview {
   display: inline-block;
-  height: 200px;
 }
 .selectfiles {
   display: none;
