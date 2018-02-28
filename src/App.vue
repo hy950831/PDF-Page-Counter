@@ -1,21 +1,22 @@
 <template>
   <div id="app">
-    <el-button size="small" type="primary">
-      <label class="selectBtn">
-        点此上传
-        <input type="file" class="selectfiles" accept=".pdf" name="files" id="files" multiple @change="processFile($event)">
-      </label>
+    <input ref="files" type="file" class="selectfiles" accept=".pdf" name="files" id="files" multiple @change="processFile($event)">
+    <el-button size="small" type="primary" @click="upload">
+      点此上传
+    </el-button>
+    <el-button size="small" type="primary" @click="switchDuplex">
+      单双切换
     </el-button>
     <h3 style="text-align:center">共计 {{tableData.length}} 文件 {{totalSheetCount}} 张</h3>
     <el-table :data="tableData" style="width: 100%" border>
       <el-table-column prop="name" label="文件名" min-width="110" align="center"></el-table-column>
       <el-table-column prop="copies" label="份数" width="150" align="center">
         <template slot-scope="scope">
-          <el-input-number size="mini" v-model="scope.row.copies" @change="handleCopiesChange($event, scope.$index)" :min="1" :max="100"></el-input-number>
+          <el-input-number size="mini" v-model="scope.row.copies" controls-position="right" @change="handleCopiesChange($event, scope.$index)" :min="1" :max="100"></el-input-number>
         </template>
       </el-table-column>
       <el-table-column prop="pageCount" label="页数" width="110" align="center"></el-table-column>
-      <el-table-column prop="preview" label="预览" width="100" align="center">
+      <el-table-column prop="preview" label="预览" width="120" align="center">
         <template slot-scope="scope">
           <pdf class="preview" :src="scope.row.address" @num-pages="updatePageCount($event, scope.$index)"></pdf>
         </template>
@@ -56,6 +57,9 @@ export default {
     }
   },
   methods: {
+    upload() {
+      this.$refs.files.click()
+    },
     clean() {
       this.tableData = []
       this.totalSheetCount = 0
@@ -74,6 +78,15 @@ export default {
         item.sheetsNeeded = 0
         this.tableData.push(item)
       }
+    },
+    switchDuplex() {
+      this.tableData = this.tableData.map((item) => {
+        item.duplexPrint = !item.duplexPrint
+        return item
+      })
+      this.tableData.map((item, index) => {
+        this.updateSheetsNeeded(index)
+      })
     },
     updatePageCount(event, index) {
       if (event) {
