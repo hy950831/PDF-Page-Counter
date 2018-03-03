@@ -7,6 +7,12 @@
     <el-button size="small" type="primary" @click="switchDuplex">
       单双切换
     </el-button>
+    <el-button size="small" type="primary" @click="addOneCopy">
+      整体加一
+    </el-button>
+    <el-button size="small" type="primary" @click="subOneCopy">
+      整体减一
+    </el-button>
     <h3 style="text-align:center">共计 {{tableData.length}} 文件 {{totalSheetCount}} 张</h3>
     <el-table :data="tableData" style="width: 100%" border>
       <el-table-column prop="name" label="文件名" min-width="110" align="center"></el-table-column>
@@ -78,6 +84,26 @@ export default {
         item.sheetsNeeded = 0
         this.tableData.push(item)
       }
+    },
+    addOneCopy() {
+      this.tableData = this.tableData.map((item) => {
+        item.copies += 1
+        return item
+      })
+      this.tableData.map((item, index) => {
+        this.updateSheetsNeeded(index)
+      })
+    },
+    subOneCopy() {
+      this.tableData = this.tableData.map((item) => {
+        if (item.copies > 1) {
+          item.copies -= 1
+        }
+        return item
+      })
+      this.tableData.map((item, index) => {
+        this.updateSheetsNeeded(index)
+      })
     },
     switchDuplex() {
       this.tableData = this.tableData.map((item) => {
