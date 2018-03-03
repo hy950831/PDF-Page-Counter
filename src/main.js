@@ -1,11 +1,24 @@
-import Vue from 'vue'
-import ElementUI from 'element-ui'
-import 'element-ui/lib/theme-chalk/index.css'
-import App from './App.vue'
+import Vue from 'vue';
+import {
+  Button,
+  Select,
+  InputNumber,
+  Table,
+  TableColumn,
+  Option,
+  Switch
+} from 'element-ui';
+import App from './App.vue';
 
-Vue.config.productionTip = false
-Vue.use(ElementUI)
+Vue.config.productionTip = false;
+Vue.use(Button);
+Vue.use(Select);
+Vue.use(InputNumber);
+Vue.use(Table);
+Vue.use(TableColumn);
+Vue.use(Option);
+Vue.use(Switch);
 
 new Vue({
   render: h => h(App)
-}).$mount('#app')
+}).$mount('#app');
