@@ -64,16 +64,16 @@ export default {
   },
   methods: {
     upload() {
+      this.cleanData()
       this.$refs.files.click()
     },
-    clean() {
+    cleanData() {
       this.tableData = []
       this.totalSheetCount = 0
     },
     processFile(event) {
-      this.clean()
+      this.cleanData()
       this.fileList = event.target.files
-      this.tableData = []
       const URL = window.URL || window.webkitURL
       for (let item of this.fileList) {
         item.address = URL.createObjectURL(item)
