@@ -86,7 +86,7 @@ export default {
     return {
       visible: false,
       tableData: [],
-      options: [1, 2, 4, 6, 8],
+      options: [1, 2, 4, 6, 8, 10, 12],
       totalSheetCount: 0
     }
   },
@@ -96,7 +96,7 @@ export default {
       this.tableData = this.tableData.map((item) => {
         if (item.pagesPerSheet === 1) {
           item.pagesPerSheet += 1
-        } else {
+        } else if (item.pagesPerSheet !== 12) {
           item.pagesPerSheet += 2
         }
         return item
@@ -109,7 +109,7 @@ export default {
       this.tableData = this.tableData.map((item) => {
         if (item.pagesPerSheet === 2) {
           item.pagesPerSheet -= 1
-        } else {
+        } else if(item.pagesPerSheet !== 1){
           item.pagesPerSheet -= 2
         }
         return item
