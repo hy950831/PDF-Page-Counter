@@ -8,19 +8,21 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
-    "@vue/babel-preset-app": "^3.0.0-beta.3",
+    "@vue/babel-preset-app": "^3.4.1",
     "ajv": "^6.2.0",
     "ajv-keywords": "^3.1.0",
-    "babel-preset-env": "^1.6.1",
+    "babel-preset-env": "^1.7.0",
     "element-ui": "^2.2.0",
-    "jshint": "^2.9.5",
+    "html2canvas": "^1.0.0-alpha.12",
+    "jshint": "^2.10.1",
+    "jspdf": "^1.4.1",
     "vue": "^2.5.13",
     "vue-pdf": "^3.2.2"
   },
   "devDependencies": {
-    "@vue/cli-plugin-babel": "^3.0.0-beta.1",
-    "@vue/cli-plugin-eslint": "^3.0.0-beta.1",
-    "@vue/cli-service": "^3.0.0-beta.1",
+    "@vue/cli-plugin-babel": "^3.4.1",
+    "@vue/cli-plugin-eslint": "^3.4.1",
+    "@vue/cli-service": "^3.4.1",
     "babel-plugin-component": "^1.1.0",
     "vue-template-compiler": "^2.5.13"
   },
@@ -45,12 +47,19 @@
   },
   "eslintConfig": {
     "root": true,
-    "extends": ["plugin:vue/essential", "eslint:recommended"]
+    "extends": [
+      "plugin:vue/essential",
+      "eslint:recommended"
+    ]
   },
   "postcss": {
     "plugins": {
       "autoprefixer": {}
     }
   },
-  "browserslist": ["> 1%", "last 2 versions", "not ie <= 8"]
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not ie <= 8"
+  ]
 }
