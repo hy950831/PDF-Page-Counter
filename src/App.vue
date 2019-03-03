@@ -20,7 +20,9 @@
 
     <el-button size="small" type="primary" @click="handleDownload">保存</el-button>
     <div id="main-box" ref="mainbox">
-      <h3 style="text-align:center">共计 {{tableData.length}} 文件 {{totalSheetCount}} 张</h3>
+      <h3
+        style="text-align:center"
+      >共计 {{tableData.length}} 文件 {{totalSheetCount}} 张 总价 {{totalAmount}}$</h3>
       <el-table :data="tableData" style="width: 100%" border>
         <el-table-column prop="name" label="文件名" min-width="110" align="center"></el-table-column>
         <el-table-column prop="copies" label="份数" width="150" align="center">
@@ -87,7 +89,8 @@ export default {
       visible: false,
       tableData: [],
       options: [1, 2, 4, 6, 8, 10, 12],
-      totalSheetCount: 0
+      totalSheetCount: 0,
+      totalAmount: 0
     }
   },
   methods: {
@@ -109,7 +112,7 @@ export default {
       this.tableData = this.tableData.map((item) => {
         if (item.pagesPerSheet === 2) {
           item.pagesPerSheet -= 1
-        } else if(item.pagesPerSheet !== 1){
+        } else if (item.pagesPerSheet !== 1) {
           item.pagesPerSheet -= 2
         }
         return item
@@ -225,6 +228,21 @@ export default {
       newItem.sheetsNeeded = sheets
       this.$set(this.tableData, index, newItem)
       this.updateTotalSheetCount()
+      this.updateTotalAmount()
+    },
+    updateTotalAmount() {
+      this.totalAmount = 0.0
+      const dupPrice = this.totalSheetCount >= 100 ? 0.09 : 0.1
+      const singlePrice = this.totalSheetCount >= 100 ? 0.06 : 0.08
+      this.tableData.forEach(element => {
+        if (element.duplexPrint) {
+          this.totalAmount += dupPrice * element.sheetsNeeded
+        }
+        else {
+          this.totalAmount += singlePrice * element.sheetsNeeded
+        }
+      });
+      this.totalAmount = this.totalAmount.toFixed(2)
     },
     updateTotalSheetCount() {
       this.totalSheetCount = 0
